@@ -7,7 +7,7 @@ import { buttonVariants } from "@/components/ui/button";
 
 export type CalendarProps = React.ComponentProps<typeof DayPicker>;
 
-function Calendar({ className, classNames, showOutsideDays = true, ...props }: CalendarProps) {
+function Calendar({ className, classNames, showOutsideDays = false, ...props }: CalendarProps) {
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}
@@ -31,14 +31,6 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
         cell: cn(
           "relative h-10 w-10 p-0 text-center text-sm transition-colors",
           "focus-within:relative focus-within:z-20",
-          "[&:has(.day-range-middle)]:bg-[#D2E3FC]",
-          "[&:has([aria-selected].day-range-start)]:bg-[#D2E3FC]",
-          "[&:has([aria-selected].day-range-end)]:bg-[#D2E3FC]",
-          "first:[&:has(.day-range-middle)]:rounded-l-xl last:[&:has(.day-range-middle)]:rounded-r-xl",
-          "first:[&:has([aria-selected].day-range-start)]:rounded-l-xl last:[&:has([aria-selected].day-range-end)]:rounded-r-xl",
-        ),
-        day: cn(
-          "flex h-10 w-full items-center justify-center rounded-md p-0 text-sm font-medium transition-colors",
           "aria-selected:opacity-100 hover:bg-[#D2E3FC] hover:text-[#174ea6]",
         ),
         day_range_start: "day-range-start",
