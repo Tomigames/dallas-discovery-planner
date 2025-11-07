@@ -3,7 +3,33 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Calendar, Clock, DollarSign, MapPin } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Calendar, CalendarDays, Clock, DollarSign, MapPin } from "lucide-react";
+
+const monthDisplay = [
+  { label: "Jan", value: "January" },
+  { label: "Feb", value: "February" },
+  { label: "Mar", value: "March" },
+  { label: "Apr", value: "April" },
+  { label: "May", value: "May" },
+  { label: "Jun", value: "June" },
+  { label: "Jul", value: "July" },
+  { label: "Aug", value: "August" },
+  { label: "Sep", value: "September" },
+  { label: "Oct", value: "October" },
+  { label: "Nov", value: "November" },
+  { label: "Dec", value: "December" }
+];
+
+const weekDisplay = [
+  { label: "S", value: "Sunday" },
+  { label: "M", value: "Monday" },
+  { label: "T", value: "Tuesday" },
+  { label: "W", value: "Wednesday" },
+  { label: "Th", value: "Thursday" },
+  { label: "F", value: "Friday" },
+  { label: "S", value: "Saturday" }
+];
 
 interface ActivityCardProps {
   activity: Activity;
@@ -12,6 +38,9 @@ interface ActivityCardProps {
 }
 
 export const ActivityCard = ({ activity, onAddToCart, isInCart }: ActivityCardProps) => {
+  const availableMonthsSet = new Set(activity.availableMonths.map(month => month.toLowerCase()));
+  const openDaysSet = new Set(activity.openDays.map(day => day.toLowerCase()));
+
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow">
       <div className="aspect-video overflow-hidden">
@@ -79,14 +108,49 @@ export const ActivityCard = ({ activity, onAddToCart, isInCart }: ActivityCardPr
                 
                 <div className="flex items-start gap-3">
                   <Calendar className="h-5 w-5 text-primary mt-0.5" />
-                  <div>
-                    <h4 className="font-semibold">Open Days</h4>
-                    <div className="flex flex-wrap gap-1 mt-1">
-                      {activity.openDays.map((day, i) => (
-                        <Badge key={i} variant="outline" className="text-xs">
-                          {day.substring(0, 3)}
-                        </Badge>
+                  <div className="w-full">
+                    <h4 className="font-semibold">Monthly Availability</h4>
+                    <div className="grid grid-cols-6 gap-2 mt-2">
+                      {monthDisplay.map(month => (
+                        <div
+                          key={month.value}
+                          className={cn(
+                            "rounded-full px-2 py-1 text-xs text-center border",
+                            availableMonthsSet.has(month.value.toLowerCase())
+                              ? "bg-primary text-primary-foreground border-primary"
+                              : "text-muted-foreground border-border"
+                          )}
+                        >
+                          {month.label}
+                        </div>
                       ))}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <CalendarDays className="h-5 w-5 text-primary mt-0.5" />
+                  <div className="w-full">
+                    <h4 className="font-semibold">Weekly Schedule</h4>
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {weekDisplay.map(day => {
+                        const isOpen = openDaysSet.has(day.value.toLowerCase());
+
+                        return (
+                          <div
+                            key={day.value}
+                            className={cn(
+                              "w-9 h-9 rounded-full flex items-center justify-center text-xs font-medium border",
+                              isOpen
+                                ? "bg-emerald-500/90 text-white border-emerald-500"
+                                : "bg-muted text-muted-foreground"
+                            )}
+                            aria-label={`${day.value} ${isOpen ? "open" : "closed"}`}
+                          >
+                            {day.label}
+                          </div>
+                        );
+                      })}
                     </div>
                     <p className="text-sm text-muted-foreground mt-2">{activity.hours}</p>
                   </div>
