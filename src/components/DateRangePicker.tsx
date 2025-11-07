@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { format } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { DateRange, SelectRangeEventHandler } from "react-day-picker";
@@ -10,9 +11,15 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 interface DateRangePickerProps {
   dateRange: DateRange | undefined;
   onDateRangeChange: (range: DateRange | undefined) => void;
+  onApply?: () => void;
 }
 
-export const DateRangePicker = ({ dateRange, onDateRangeChange }: DateRangePickerProps) => {
+export const DateRangePicker = ({
+  dateRange,
+  onDateRangeChange,
+  onApply,
+}: DateRangePickerProps) => {
+  const [open, setOpen] = useState(false);
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
@@ -45,9 +52,16 @@ export const DateRangePicker = ({ dateRange, onDateRangeChange }: DateRangePicke
   };
 
   const hasSelection = Boolean(dateRange?.from || dateRange?.to);
+  const canApply = Boolean(dateRange?.from && dateRange?.to);
+
+  const handleDone = () => {
+    if (!canApply) return;
+    onApply?.();
+    setOpen(false);
+  };
 
   return (
-    <Popover>
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
           variant="outline"
@@ -80,17 +94,27 @@ export const DateRangePicker = ({ dateRange, onDateRangeChange }: DateRangePicke
           numberOfMonths={2}
           disabled={date => date < today}
         />
-        <div className="flex items-center justify-between border-t px-3 py-2 text-sm">
+        <div className="flex items-center justify-between gap-3 border-t px-3 py-2 text-sm">
           <span className="text-muted-foreground">Choose a start date, then pick your return.</span>
-          <Button
-            type="button"
-            size="sm"
-            variant="ghost"
-            onClick={handleClear}
-            disabled={!hasSelection}
-          >
-            Clear
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              type="button"
+              size="sm"
+              variant="ghost"
+              onClick={handleClear}
+              disabled={!hasSelection}
+            >
+              Clear
+            </Button>
+            <Button
+              type="button"
+              size="sm"
+              onClick={handleDone}
+              disabled={!canApply}
+            >
+              Done
+            </Button>
+          </div>
         </div>
       </PopoverContent>
     </Popover>

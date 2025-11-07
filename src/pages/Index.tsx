@@ -135,17 +135,18 @@ const Index = () => {
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label>Travel Dates</Label>
-              <DateRangePicker 
-                dateRange={dateRange} 
+              <DateRangePicker
+                dateRange={dateRange}
                 onDateRangeChange={setDateRange}
+                onApply={handleSearch}
               />
             </div>
-            
-            <Button 
-              onClick={handleSearch} 
+
+            <Button
+              onClick={handleSearch}
               className="w-full"
               size="lg"
-              disabled={!dateRange?.from}
+              disabled={!(dateRange?.from && dateRange?.to)}
             >
               Find Activities
             </Button>
