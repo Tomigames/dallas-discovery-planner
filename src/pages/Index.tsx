@@ -2,38 +2,98 @@ import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ActivityCard } from "@/components/ActivityCard";
 import { CartSidebar } from "@/components/CartSidebar";
+import { DateRangePicker } from "@/components/DateRangePicker";
 import { dallasActivities, getActivitiesBySeason } from "@/data/activities";
 import { Activity } from "@/types/activity";
-import { Calendar } from "lucide-react";
+import { Calendar, Filter } from "lucide-react";
+import { DateRange } from "react-day-picker";
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
-const months = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December"
+const categories = [
+  "All Categories",
+  "Nature & Gardens",
+  "Museums & History",
+  "Museums & Science",
+  "Landmarks & Views",
+  "Family & Entertainment",
+  "Shopping & Dining",
+  "Sports & Entertainment",
+  "Nature & Recreation",
+  "Food & Markets",
+  "Parks & Recreation",
+  "Nightlife & Arts",
+  "Seasonal Events"
 ];
 
-const durations = ["1-3 days", "4-7 days", "1-2 weeks", "2+ weeks"];
-
 const Index = () => {
-  const [startMonth, setStartMonth] = useState<string>("");
-  const [endMonth, setEndMonth] = useState<string>("");
-  const [duration, setDuration] = useState<string>("");
+  const [dateRange, setDateRange] = useState<DateRange | undefined>();
+  const [selectedCategory, setSelectedCategory] = useState<string>("All Categories");
   const [cartItems, setCartItems] = useState<Activity[]>([]);
   const [filteredActivities, setFilteredActivities] = useState<Activity[]>([]);
   const [hasSearched, setHasSearched] = useState(false);
 
   const handleSearch = () => {
-    if (!startMonth || !duration) return;
+    if (!dateRange?.from) return;
     
-    const selectedMonths = endMonth 
-      ? months.slice(months.indexOf(startMonth), months.indexOf(endMonth) + 1)
-      : [startMonth];
+    const startMonth = dateRange.from.toLocaleString('en-US', { month: 'long' });
+    const endMonth = dateRange.to 
+      ? dateRange.to.toLocaleString('en-US', { month: 'long' })
+      : startMonth;
     
-    const activities = getActivitiesBySeason(selectedMonths);
+    const monthNames = [
+      "January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December"
+    ];
+    
+    const startIdx = monthNames.indexOf(startMonth);
+    const endIdx = monthNames.indexOf(endMonth);
+    
+    const selectedMonths = startIdx <= endIdx 
+      ? monthNames.slice(startIdx, endIdx + 1)
+      : [...monthNames.slice(startIdx), ...monthNames.slice(0, endIdx + 1)];
+    
+    let activities = getActivitiesBySeason(selectedMonths);
+    
+    if (selectedCategory !== "All Categories") {
+      activities = activities.filter(a => a.category === selectedCategory);
+    }
+    
     setFilteredActivities(activities);
     setHasSearched(true);
+  };
+
+  const handleCategoryChange = (category: string) => {
+    setSelectedCategory(category);
+    
+    if (hasSearched && dateRange?.from) {
+      const startMonth = dateRange.from.toLocaleString('en-US', { month: 'long' });
+      const endMonth = dateRange.to 
+        ? dateRange.to.toLocaleString('en-US', { month: 'long' })
+        : startMonth;
+      
+      const monthNames = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+      ];
+      
+      const startIdx = monthNames.indexOf(startMonth);
+      const endIdx = monthNames.indexOf(endMonth);
+      
+      const selectedMonths = startIdx <= endIdx 
+        ? monthNames.slice(startIdx, endIdx + 1)
+        : [...monthNames.slice(startIdx), ...monthNames.slice(0, endIdx + 1)];
+      
+      let activities = getActivitiesBySeason(selectedMonths);
+      
+      if (category !== "All Categories") {
+        activities = activities.filter(a => a.category === category);
+      }
+      
+      setFilteredActivities(activities);
+    }
   };
 
   const addToCart = (activity: Activity) => {
@@ -69,59 +129,23 @@ const Index = () => {
               When are you visiting Dallas?
             </CardTitle>
             <CardDescription>
-              Tell us your travel dates and we'll suggest the best activities
+              Select your travel dates to get personalized activity recommendations
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="start-month">Start Month</Label>
-                <Select value={startMonth} onValueChange={setStartMonth}>
-                  <SelectTrigger id="start-month">
-                    <SelectValue placeholder="Select month" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {months.map(month => (
-                      <SelectItem key={month} value={month}>{month}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="end-month">End Month (Optional)</Label>
-                <Select value={endMonth} onValueChange={setEndMonth}>
-                  <SelectTrigger id="end-month">
-                    <SelectValue placeholder="Same month" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {months.map(month => (
-                      <SelectItem key={month} value={month}>{month}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="duration">Duration</Label>
-                <Select value={duration} onValueChange={setDuration}>
-                  <SelectTrigger id="duration">
-                    <SelectValue placeholder="Select duration" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {durations.map(dur => (
-                      <SelectItem key={dur} value={dur}>{dur}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+            <div className="space-y-2">
+              <Label>Travel Dates</Label>
+              <DateRangePicker 
+                dateRange={dateRange} 
+                onDateRangeChange={setDateRange}
+              />
             </div>
             
             <Button 
               onClick={handleSearch} 
               className="w-full"
               size="lg"
-              disabled={!startMonth || !duration}
+              disabled={!dateRange?.from}
             >
               Find Activities
             </Button>
@@ -129,29 +153,66 @@ const Index = () => {
         </Card>
       </div>
 
+      {/* Category Filter */}
+      {hasSearched && (
+        <div className="container mx-auto px-4 mb-8">
+          <div className="flex items-center gap-2 mb-4">
+            <Filter className="h-5 w-5" />
+            <h3 className="font-semibold">Filter by Category</h3>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {categories.map(category => (
+              <Badge
+                key={category}
+                variant={selectedCategory === category ? "default" : "outline"}
+                className={cn(
+                  "cursor-pointer transition-colors",
+                  selectedCategory === category && "shadow-md"
+                )}
+                onClick={() => handleCategoryChange(category)}
+              >
+                {category}
+              </Badge>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Activities Grid */}
       <div className="container mx-auto px-4 pb-24">
         {hasSearched && (
           <>
             <div className="mb-8">
               <h2 className="text-3xl font-bold mb-2">
-                Recommended Activities
+                {selectedCategory === "All Categories" 
+                  ? "Recommended Activities" 
+                  : selectedCategory}
               </h2>
               <p className="text-muted-foreground">
-                {filteredActivities.length} activities found for your dates
+                {filteredActivities.length} {filteredActivities.length === 1 ? 'activity' : 'activities'} found
               </p>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredActivities.map(activity => (
-                <ActivityCard
-                  key={activity.id}
-                  activity={activity}
-                  onAddToCart={addToCart}
-                  isInCart={cartItems.some(item => item.id === activity.id)}
-                />
-              ))}
-            </div>
+            {filteredActivities.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredActivities.map(activity => (
+                  <ActivityCard
+                    key={activity.id}
+                    activity={activity}
+                    onAddToCart={addToCart}
+                    isInCart={cartItems.some(item => item.id === activity.id)}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <Filter className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
+                <h3 className="text-xl font-semibold mb-2">No activities found</h3>
+                <p className="text-muted-foreground">
+                  Try selecting a different category or adjusting your dates
+                </p>
+              </div>
+            )}
           </>
         )}
         
@@ -160,7 +221,7 @@ const Index = () => {
             <Calendar className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
             <h3 className="text-xl font-semibold mb-2">Ready to explore Dallas?</h3>
             <p className="text-muted-foreground">
-              Fill out the form above to get personalized activity recommendations
+              Select your travel dates above to get personalized activity recommendations
             </p>
           </div>
         )}

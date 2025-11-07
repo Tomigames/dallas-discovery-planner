@@ -80,10 +80,15 @@ export const ActivityCard = ({ activity, onAddToCart, isInCart }: ActivityCardPr
                 <div className="flex items-start gap-3">
                   <Calendar className="h-5 w-5 text-primary mt-0.5" />
                   <div>
-                    <h4 className="font-semibold">Dates & Hours</h4>
-                    {activity.dates.map((date, i) => (
-                      <p key={i} className="text-sm text-muted-foreground">{date}</p>
-                    ))}
+                    <h4 className="font-semibold">Open Days</h4>
+                    <div className="flex flex-wrap gap-1 mt-1">
+                      {activity.openDays.map((day, i) => (
+                        <Badge key={i} variant="outline" className="text-xs">
+                          {day.substring(0, 3)}
+                        </Badge>
+                      ))}
+                    </div>
+                    <p className="text-sm text-muted-foreground mt-2">{activity.hours}</p>
                   </div>
                 </div>
                 

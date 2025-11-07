@@ -5,7 +5,8 @@ export interface Activity {
   shortDescription: string;
   category: string;
   price: number;
-  dates: string[];
+  openDays: string[];
+  hours: string;
   times: string[];
   duration: string;
   image: string;
