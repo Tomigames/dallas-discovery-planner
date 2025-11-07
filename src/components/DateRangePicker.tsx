@@ -1,7 +1,7 @@
-import { useState } from "react";
 import { format } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
-import { DateRange } from "react-day-picker";
+import { DateRange, SelectRangeEventHandler } from "react-day-picker";
+
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -13,6 +13,39 @@ interface DateRangePickerProps {
 }
 
 export const DateRangePicker = ({ dateRange, onDateRangeChange }: DateRangePickerProps) => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const handleSelect: SelectRangeEventHandler = (range, selectedDay) => {
+    if (!selectedDay) {
+      onDateRangeChange(range);
+      return;
+    }
+
+    if (!dateRange?.from || dateRange?.to) {
+      onDateRangeChange({ from: selectedDay, to: undefined });
+      return;
+    }
+
+    if (selectedDay < dateRange.from) {
+      onDateRangeChange({ from: selectedDay, to: undefined });
+      return;
+    }
+
+    if (selectedDay.getTime() === dateRange.from.getTime()) {
+      onDateRangeChange({ from: selectedDay, to: selectedDay });
+      return;
+    }
+
+    onDateRangeChange({ from: dateRange.from, to: selectedDay });
+  };
+
+  const handleClear = () => {
+    onDateRangeChange(undefined);
+  };
+
+  const hasSelection = Boolean(dateRange?.from || dateRange?.to);
+
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -20,7 +53,7 @@ export const DateRangePicker = ({ dateRange, onDateRangeChange }: DateRangePicke
           variant="outline"
           className={cn(
             "w-full justify-start text-left font-normal",
-            !dateRange && "text-muted-foreground"
+            !dateRange && "text-muted-foreground",
           )}
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
@@ -43,10 +76,22 @@ export const DateRangePicker = ({ dateRange, onDateRangeChange }: DateRangePicke
           mode="range"
           defaultMonth={dateRange?.from}
           selected={dateRange}
-          onSelect={onDateRangeChange}
+          onSelect={handleSelect}
           numberOfMonths={2}
-          disabled={(date) => date < new Date()}
+          disabled={date => date < today}
         />
+        <div className="flex items-center justify-between border-t px-3 py-2 text-sm">
+          <span className="text-muted-foreground">Choose a start date, then pick your return.</span>
+          <Button
+            type="button"
+            size="sm"
+            variant="ghost"
+            onClick={handleClear}
+            disabled={!hasSelection}
+          >
+            Clear
+          </Button>
+        </div>
       </PopoverContent>
     </Popover>
   );

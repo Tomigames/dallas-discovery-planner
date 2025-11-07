@@ -1,5 +1,20 @@
 import { Activity } from "@/types/activity";
 
+const allMonths = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December"
+];
+
 export const dallasActivities: Activity[] = [
   {
     id: "1",
@@ -13,7 +28,7 @@ export const dallasActivities: Activity[] = [
     times: ["9:00 AM", "10:00 AM", "11:00 AM", "1:00 PM", "3:00 PM"],
     duration: "2-4 hours",
     image: "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=800&q=80",
-    season: ["spring", "summer", "fall", "winter"]
+    availableMonths: allMonths,
   },
   {
     id: "2",
@@ -27,7 +42,7 @@ export const dallasActivities: Activity[] = [
     times: ["10:00 AM", "12:00 PM", "2:00 PM", "4:00 PM"],
     duration: "2-3 hours",
     image: "https://images.unsplash.com/photo-1569098644584-210bcd375b59?w=800&q=80",
-    season: ["spring", "summer", "fall", "winter"]
+    availableMonths: allMonths,
   },
   {
     id: "3",
@@ -41,7 +56,7 @@ export const dallasActivities: Activity[] = [
     times: ["10:00 AM", "12:00 PM", "2:00 PM", "4:00 PM", "6:00 PM", "8:00 PM"],
     duration: "1-2 hours",
     image: "https://images.unsplash.com/photo-1514565131-fce0801e5785?w=800&q=80",
-    season: ["spring", "summer", "fall", "winter"]
+    availableMonths: allMonths,
   },
   {
     id: "4",
@@ -55,7 +70,7 @@ export const dallasActivities: Activity[] = [
     times: ["9:00 AM", "10:00 AM", "11:00 AM", "1:00 PM"],
     duration: "3-5 hours",
     image: "https://images.unsplash.com/photo-1564349683136-77e08dba1ef7?w=800&q=80",
-    season: ["spring", "summer", "fall", "winter"]
+    availableMonths: allMonths,
   },
   {
     id: "5",
@@ -69,7 +84,7 @@ export const dallasActivities: Activity[] = [
     times: ["10:00 AM", "11:00 AM", "1:00 PM", "3:00 PM"],
     duration: "3-4 hours",
     image: "https://images.unsplash.com/photo-1581094271901-8022df4466f9?w=800&q=80",
-    season: ["spring", "summer", "fall", "winter"]
+    availableMonths: allMonths,
   },
   {
     id: "6",
@@ -83,7 +98,7 @@ export const dallasActivities: Activity[] = [
     times: ["All day"],
     duration: "2-4 hours",
     image: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&q=80",
-    season: ["spring", "summer", "fall", "winter"]
+    availableMonths: allMonths,
   },
   {
     id: "7",
@@ -97,7 +112,7 @@ export const dallasActivities: Activity[] = [
     times: ["10:00 AM", "12:00 PM", "2:00 PM", "4:00 PM"],
     duration: "1.5-2 hours",
     image: "https://images.unsplash.com/photo-1508779802189-2686abda6a22?w=800&q=80",
-    season: ["spring", "summer", "fall", "winter"]
+    availableMonths: allMonths,
   },
   {
     id: "8",
@@ -111,7 +126,7 @@ export const dallasActivities: Activity[] = [
     times: ["All day"],
     duration: "1-4 hours",
     image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80",
-    season: ["spring", "summer", "fall", "winter"]
+    availableMonths: allMonths,
   },
   {
     id: "9",
@@ -125,7 +140,7 @@ export const dallasActivities: Activity[] = [
     times: ["9:00 AM", "11:00 AM", "1:00 PM", "3:00 PM"],
     duration: "1-2 hours",
     image: "https://images.unsplash.com/photo-1488459716781-31db52582fe9?w=800&q=80",
-    season: ["spring", "summer", "fall", "winter"]
+    availableMonths: allMonths,
   },
   {
     id: "10",
@@ -139,7 +154,7 @@ export const dallasActivities: Activity[] = [
     times: ["All day"],
     duration: "1-3 hours",
     image: "https://images.unsplash.com/photo-1519331379826-f10be5486c6f?w=800&q=80",
-    season: ["spring", "summer", "fall", "winter"]
+    availableMonths: allMonths,
   },
   {
     id: "11",
@@ -153,7 +168,7 @@ export const dallasActivities: Activity[] = [
     times: ["Evening hours"],
     duration: "2-4 hours",
     image: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=800&q=80",
-    season: ["spring", "summer", "fall", "winter"]
+    availableMonths: allMonths,
   },
   {
     id: "12",
@@ -167,31 +182,16 @@ export const dallasActivities: Activity[] = [
     times: ["10:00 AM", "2:00 PM", "6:00 PM"],
     duration: "4-8 hours",
     image: "https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?w=800&q=80",
-    season: ["fall"]
+    availableMonths: ["September", "October"],
   }
 ];
 
-export const getActivitiesBySeason = (months: string[]): Activity[] => {
+export const getActivitiesByMonths = (months: string[]): Activity[] => {
   if (!months || months.length === 0) return dallasActivities;
-  
-  const seasonMap: { [key: string]: string } = {
-    "December": "winter",
-    "January": "winter",
-    "February": "winter",
-    "March": "spring",
-    "April": "spring",
-    "May": "spring",
-    "June": "summer",
-    "July": "summer",
-    "August": "summer",
-    "September": "fall",
-    "October": "fall",
-    "November": "fall"
-  };
-  
-  const seasons = months.map(month => seasonMap[month]).filter(Boolean);
-  
-  return dallasActivities.filter(activity => 
-    activity.season.some(s => seasons.includes(s))
+
+  const normalizedMonths = months.map(month => month.toLowerCase());
+
+  return dallasActivities.filter(activity =>
+    activity.availableMonths.some(month => normalizedMonths.includes(month.toLowerCase()))
   );
 };
