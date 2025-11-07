@@ -10,5 +10,5 @@ export interface Activity {
   times: string[];
   duration: string;
   image: string;
-  season: string[];
+  availableMonths: string[];
 }

@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ActivityCard } from "@/components/ActivityCard";
 import { CartSidebar } from "@/components/CartSidebar";
 import { DateRangePicker } from "@/components/DateRangePicker";
-import { dallasActivities, getActivitiesBySeason } from "@/data/activities";
+import { getActivitiesByMonths } from "@/data/activities";
 import { Activity } from "@/types/activity";
 import { Calendar, Filter } from "lucide-react";
 import { DateRange } from "react-day-picker";
@@ -55,7 +55,7 @@ const Index = () => {
       ? monthNames.slice(startIdx, endIdx + 1)
       : [...monthNames.slice(startIdx), ...monthNames.slice(0, endIdx + 1)];
     
-    let activities = getActivitiesBySeason(selectedMonths);
+    let activities = getActivitiesByMonths(selectedMonths);
     
     if (selectedCategory !== "All Categories") {
       activities = activities.filter(a => a.category === selectedCategory);
@@ -86,7 +86,7 @@ const Index = () => {
         ? monthNames.slice(startIdx, endIdx + 1)
         : [...monthNames.slice(startIdx), ...monthNames.slice(0, endIdx + 1)];
       
-      let activities = getActivitiesBySeason(selectedMonths);
+      let activities = getActivitiesByMonths(selectedMonths);
       
       if (category !== "All Categories") {
         activities = activities.filter(a => a.category === category);
@@ -135,17 +135,18 @@ const Index = () => {
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label>Travel Dates</Label>
-              <DateRangePicker 
-                dateRange={dateRange} 
+              <DateRangePicker
+                dateRange={dateRange}
                 onDateRangeChange={setDateRange}
+                onApply={handleSearch}
               />
             </div>
-            
-            <Button 
-              onClick={handleSearch} 
+
+            <Button
+              onClick={handleSearch}
               className="w-full"
               size="lg"
-              disabled={!dateRange?.from}
+              disabled={!(dateRange?.from && dateRange?.to)}
             >
               Find Activities
             </Button>
