@@ -114,10 +114,8 @@ const Index = () => {
         style={{
           backgroundImage:
             "linear-gradient(to bottom, rgba(0,0,0,0.65), rgba(0,0,0,0.35), rgba(0,0,0,0.65)), url('/Dallas.jpeg')",
-          backgroundSize: "contain",
-          backgroundRepeat: "no-repeat",
+          backgroundSize: "cover",
           backgroundPosition: "center",
-          backgroundColor: "black",
         }}
       >
         <div className="relative container mx-auto max-w-4xl text-center">
