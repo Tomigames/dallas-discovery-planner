@@ -113,9 +113,11 @@ const Index = () => {
         className="relative overflow-hidden py-16 px-4 text-white"
         style={{
           backgroundImage:
-            "linear-gradient(to bottom, rgba(0,0,0,0.65), rgba(0,0,0,0.35), rgba(0,0,0,0.65)), url('https://images.unsplash.com/photo-1505761671935-60b3a7427bad?auto=format&fit=crop&w=1920&q=80')",
-          backgroundSize: "cover",
+            "linear-gradient(to bottom, rgba(0,0,0,0.65), rgba(0,0,0,0.35), rgba(0,0,0,0.65)), url('/Dallas.jpeg')",
+          backgroundSize: "contain",
+          backgroundRepeat: "no-repeat",
           backgroundPosition: "center",
+          backgroundColor: "black",
         }}
       >
         <div className="relative container mx-auto max-w-4xl text-center">
