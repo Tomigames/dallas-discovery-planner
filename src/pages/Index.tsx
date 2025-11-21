@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ActivityCard } from "@/components/ActivityCard";
 import { CartSidebar } from "@/components/CartSidebar";
 import { DateRangePicker } from "@/components/DateRangePicker";
-import { dallasActivities, getActivitiesBySeason } from "@/data/activities";
+import { getActivitiesByMonths } from "@/data/activities";
 import { Activity } from "@/types/activity";
 import { Calendar, Filter } from "lucide-react";
 import { DateRange } from "react-day-picker";
@@ -55,7 +55,7 @@ const Index = () => {
       ? monthNames.slice(startIdx, endIdx + 1)
       : [...monthNames.slice(startIdx), ...monthNames.slice(0, endIdx + 1)];
     
-    let activities = getActivitiesBySeason(selectedMonths);
+    let activities = getActivitiesByMonths(selectedMonths);
     
     if (selectedCategory !== "All Categories") {
       activities = activities.filter(a => a.category === selectedCategory);
@@ -86,7 +86,7 @@ const Index = () => {
         ? monthNames.slice(startIdx, endIdx + 1)
         : [...monthNames.slice(startIdx), ...monthNames.slice(0, endIdx + 1)];
       
-      let activities = getActivitiesBySeason(selectedMonths);
+      let activities = getActivitiesByMonths(selectedMonths);
       
       if (category !== "All Categories") {
         activities = activities.filter(a => a.category === category);
@@ -109,8 +109,14 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
-      <div className="bg-gradient-to-br from-primary to-primary/80 text-primary-foreground py-16 px-4">
-        <div className="container mx-auto max-w-4xl text-center">
+      <div className="relative overflow-hidden py-16 px-4 text-white">
+        <img
+          src="/Dallas.jpeg"
+          alt="Dallas skyline"
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/45 to-black/60" />
+        <div className="relative container mx-auto max-w-4xl text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
             Plan Your Perfect Dallas Visit
           </h1>
@@ -135,17 +141,18 @@ const Index = () => {
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label>Travel Dates</Label>
-              <DateRangePicker 
-                dateRange={dateRange} 
+              <DateRangePicker
+                dateRange={dateRange}
                 onDateRangeChange={setDateRange}
+                onApply={handleSearch}
               />
             </div>
-            
-            <Button 
-              onClick={handleSearch} 
+
+            <Button
+              onClick={handleSearch}
               className="w-full"
               size="lg"
-              disabled={!dateRange?.from}
+              disabled={!(dateRange?.from && dateRange?.to)}
             >
               Find Activities
             </Button>
