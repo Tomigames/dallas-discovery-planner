@@ -31,7 +31,7 @@ function Calendar({ className, classNames, showOutsideDays = false, ...props }: 
         cell: cn(
           "relative h-10 w-10 p-0 text-center text-sm transition-colors",
           "focus-within:relative focus-within:z-20",
-          "[&:has(.day-range-middle)]:bg-[#E8F0FE]",
+          "[&:has(.day-range-middle)]:bg-[#D2E3FC]",
           "[&:has([aria-selected].day-range-start)]:bg-[#D2E3FC]",
           "[&:has([aria-selected].day-range-end)]:bg-[#D2E3FC]",
           "first:[&:has(.day-range-middle)]:rounded-l-xl last:[&:has(.day-range-middle)]:rounded-r-xl",
@@ -39,14 +39,14 @@ function Calendar({ className, classNames, showOutsideDays = false, ...props }: 
         ),
         day: cn(
           "flex h-10 w-full items-center justify-center rounded-md p-0 text-sm font-medium transition-colors",
-          "aria-selected:opacity-100 hover:bg-[#E8F0FE] hover:text-[#174ea6]",
+          "aria-selected:opacity-100 hover:bg-[#D2E3FC] hover:text-[#174ea6]",
         ),
         day_range_start: "day-range-start",
         day_range_end: "day-range-end",
         day_selected:
           "bg-[#1a73e8] text-white hover:bg-[#1a73e8] hover:text-white focus:bg-[#1a73e8] focus:text-white",
         day_today: "text-[#1a73e8] font-semibold",
-        day_outside: "day-outside invisible pointer-events-none",
+        day_outside: "day-outside text-muted-foreground opacity-30",
         day_disabled: "text-muted-foreground opacity-40",
         day_range_middle: "day-range-middle text-[#174ea6]",
         day_hidden: "invisible",
