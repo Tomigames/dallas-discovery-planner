@@ -109,13 +109,15 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
-      <div className="relative overflow-hidden py-16 px-4 text-white">
-        <img
-          src="/Dallas.jpeg"
-          alt="Dallas skyline"
-          className="absolute inset-0 h-full w-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/45 to-black/60" />
+      <div
+        className="relative overflow-hidden py-16 px-4 text-white"
+        style={{
+          backgroundImage:
+            "linear-gradient(to bottom, rgba(0,0,0,0.65), rgba(0,0,0,0.35), rgba(0,0,0,0.65)), url('https://images.unsplash.com/photo-1505761671935-60b3a7427bad?auto=format&fit=crop&w=1920&q=80')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
         <div className="relative container mx-auto max-w-4xl text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
             Plan Your Perfect Dallas Visit
@@ -127,7 +129,7 @@ const Index = () => {
       </div>
 
       {/* Search Form */}
-      <div className="container mx-auto max-w-4xl px-4 -mt-8 mb-12">
+      <div className="container mx-auto max-w-4xl px-4 mt-8 mb-12">
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
