@@ -28,6 +28,12 @@ export const dallasActivities: Activity[] = [
     times: ["9:00 AM", "10:00 AM", "11:00 AM", "1:00 PM", "3:00 PM"],
     duration: "2-4 hours",
     image: "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=800&q=80",
+    images: [
+      "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=1200&q=80",
+      "https://images.unsplash.com/photo-1501004318641-b39e6451bec6?w=1200&q=80",
+      "https://images.unsplash.com/photo-1501004318641-b39e6451bec6?w=1200&q=80&sat=-20"
+    ],
+    website: "https://www.dallasarboretum.org/",
     availableMonths: allMonths,
   },
   {
@@ -42,6 +48,12 @@ export const dallasActivities: Activity[] = [
     times: ["10:00 AM", "12:00 PM", "2:00 PM", "4:00 PM"],
     duration: "2-3 hours",
     image: "https://images.unsplash.com/photo-1569098644584-210bcd375b59?w=800&q=80",
+    images: [
+      "https://images.unsplash.com/photo-1569098644584-210bcd375b59?w=1200&q=80",
+      "https://images.unsplash.com/photo-1505761671935-60b3a7427bad?w=1200&q=80",
+      "https://images.unsplash.com/photo-1546527868-ccb7ee7dfa6a?w=1200&q=80"
+    ],
+    website: "https://www.jfk.org/",
     availableMonths: allMonths,
   },
   {
@@ -56,6 +68,12 @@ export const dallasActivities: Activity[] = [
     times: ["10:00 AM", "12:00 PM", "2:00 PM", "4:00 PM", "6:00 PM", "8:00 PM"],
     duration: "1-2 hours",
     image: "https://images.unsplash.com/photo-1514565131-fce0801e5785?w=800&q=80",
+    images: [
+      "https://images.unsplash.com/photo-1514565131-fce0801e5785?w=1200&q=80",
+      "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=1200&q=80",
+      "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=1200&q=80"
+    ],
+    website: "https://reuniontower.com/",
     availableMonths: allMonths,
   },
   {
@@ -70,6 +88,12 @@ export const dallasActivities: Activity[] = [
     times: ["9:00 AM", "10:00 AM", "11:00 AM", "1:00 PM"],
     duration: "3-5 hours",
     image: "https://images.unsplash.com/photo-1564349683136-77e08dba1ef7?w=800&q=80",
+    images: [
+      "https://images.unsplash.com/photo-1564349683136-77e08dba1ef7?w=1200&q=80",
+      "https://images.unsplash.com/photo-1546182990-dffeafbe841d?w=1200&q=80",
+      "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=1200&q=80&sat=-10"
+    ],
+    website: "https://www.dallaszoo.com/",
     availableMonths: allMonths,
   },
   {
@@ -84,6 +108,12 @@ export const dallasActivities: Activity[] = [
     times: ["10:00 AM", "11:00 AM", "1:00 PM", "3:00 PM"],
     duration: "3-4 hours",
     image: "https://images.unsplash.com/photo-1581094271901-8022df4466f9?w=800&q=80",
+    images: [
+      "https://images.unsplash.com/photo-1581094271901-8022df4466f9?w=1200&q=80",
+      "https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=1200&q=80",
+      "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=1200&q=80&sat=-20"
+    ],
+    website: "https://www.perotmuseum.org/",
     availableMonths: allMonths,
   },
   {
@@ -98,6 +128,12 @@ export const dallasActivities: Activity[] = [
     times: ["All day"],
     duration: "2-4 hours",
     image: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&q=80",
+    images: [
+      "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=1200&q=80",
+      "https://images.unsplash.com/photo-1505761671935-60b3a7427bad?w=1200&q=80&sat=-10",
+      "https://images.unsplash.com/photo-1515165562835-c3b8bd7c2f19?w=1200&q=80"
+    ],
+    website: "https://www.bishopartsdistrict.com/",
     availableMonths: allMonths,
   },
   {
@@ -111,7 +147,13 @@ export const dallasActivities: Activity[] = [
     hours: "Tours: 10:00 AM - 4:00 PM",
     times: ["10:00 AM", "12:00 PM", "2:00 PM", "4:00 PM"],
     duration: "1.5-2 hours",
-    image: "https://images.unsplash.com/photo-1508779802189-2686abda6a22?w=800&q=80",
+    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1200&q=80&auto=format&fit=crop",
+    images: [
+      "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1600&q=80&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1508779802189-2686abda6a22?w=1600&q=80&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1505761671935-60b3a7427bad?w=1600&q=80&auto=format&fit=crop"
+    ],
+    website: "https://attstadium.com/stadium-tours/",
     availableMonths: allMonths,
   },
   {
@@ -126,6 +168,12 @@ export const dallasActivities: Activity[] = [
     times: ["All day"],
     duration: "1-4 hours",
     image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80",
+    images: [
+      "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=80",
+      "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=1200&q=80&sat=-20",
+      "https://images.unsplash.com/photo-1505761671935-60b3a7427bad?w=1200&q=80&sat=-5"
+    ],
+    website: "https://www.dallasparks.org/235/White-Rock-Lake",
     availableMonths: allMonths,
   },
   {
@@ -140,6 +188,12 @@ export const dallasActivities: Activity[] = [
     times: ["9:00 AM", "11:00 AM", "1:00 PM", "3:00 PM"],
     duration: "1-2 hours",
     image: "https://images.unsplash.com/photo-1488459716781-31db52582fe9?w=800&q=80",
+    images: [
+      "https://images.unsplash.com/photo-1488459716781-31db52582fe9?w=1200&q=80",
+      "https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=1200&q=80",
+      "https://images.unsplash.com/photo-1486427944299-d1955d23e34d?w=1200&q=80"
+    ],
+    website: "https://dallasfarmersmarket.org/",
     availableMonths: allMonths,
   },
   {
@@ -154,6 +208,12 @@ export const dallasActivities: Activity[] = [
     times: ["All day"],
     duration: "1-3 hours",
     image: "https://images.unsplash.com/photo-1519331379826-f10be5486c6f?w=800&q=80",
+    images: [
+      "https://images.unsplash.com/photo-1519331379826-f10be5486c6f?w=1200&q=80",
+      "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=1200&q=80",
+      "https://images.unsplash.com/photo-1461301214746-1e109215d6d3?w=1200&q=80"
+    ],
+    website: "https://klydewarrenpark.org/",
     availableMonths: allMonths,
   },
   {
@@ -168,6 +228,12 @@ export const dallasActivities: Activity[] = [
     times: ["Evening hours"],
     duration: "2-4 hours",
     image: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=800&q=80",
+    images: [
+      "https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=1200&q=80",
+      "https://images.unsplash.com/photo-1499415479124-43c32433a620?w=1200&q=80",
+      "https://images.unsplash.com/photo-1464375117522-1311d6a5b81f?w=1200&q=80"
+    ],
+    website: "https://www.deepellumtexas.com/",
     availableMonths: allMonths,
   },
   {
@@ -182,6 +248,12 @@ export const dallasActivities: Activity[] = [
     times: ["10:00 AM", "2:00 PM", "6:00 PM"],
     duration: "4-8 hours",
     image: "https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?w=800&q=80",
+    images: [
+      "https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?w=1200&q=80",
+      "https://images.unsplash.com/photo-1520697830682-bbb6e85e2b33?w=1200&q=80",
+      "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=1200&q=80&sat=-5"
+    ],
+    website: "https://bigtex.com/",
     availableMonths: ["September", "October"],
   }
 ];

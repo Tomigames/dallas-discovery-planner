@@ -10,5 +10,7 @@ export interface Activity {
   times: string[];
   duration: string;
   image: string;
+  images: string[];
   availableMonths: string[];
+  website: string;
 }

@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Activity } from "@/types/activity";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,7 +13,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
-import { Calendar, CalendarDays, Clock, DollarSign, MapPin } from "lucide-react";
+import { Calendar, CalendarDays, ChevronLeft, ChevronRight, Clock, DollarSign, ExternalLink, MapPin } from "lucide-react";
 
 const monthDisplay = [
   { label: "Jan", value: "January" },
@@ -42,12 +43,34 @@ const weekDisplay = [
 interface ActivityCardProps {
   activity: Activity;
   onAddToCart: (activity: Activity) => void;
+  onRemoveFromCart: (id: string) => void;
   isInCart: boolean;
 }
 
-export const ActivityCard = ({ activity, onAddToCart, isInCart }: ActivityCardProps) => {
+export const ActivityCard = ({ activity, onAddToCart, onRemoveFromCart, isInCart }: ActivityCardProps) => {
+  const galleryImages = activity.images && activity.images.length > 0 ? activity.images : [activity.image];
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const activeImage = galleryImages[Math.min(activeImageIndex, galleryImages.length - 1)];
+
   const availableMonthsSet = new Set(activity.availableMonths.map(month => month.toLowerCase()));
   const openDaysSet = new Set(activity.openDays.map(day => day.toLowerCase()));
+  useEffect(() => {
+    setActiveImageIndex(0);
+  }, [activity.id]);
+  const handleCartClick = () => {
+    if (isInCart) {
+      onRemoveFromCart(activity.id);
+      return;
+    }
+    onAddToCart(activity);
+  };
+  const goToNextImage = () => {
+    setActiveImageIndex(prev => (prev + 1) % galleryImages.length);
+  };
+  const goToPrevImage = () => {
+    setActiveImageIndex(prev => (prev - 1 + galleryImages.length) % galleryImages.length);
+  };
+  const setImage = (index: number) => setActiveImageIndex(index);
 
   return (
     <Dialog>
@@ -85,6 +108,15 @@ export const ActivityCard = ({ activity, onAddToCart, isInCart }: ActivityCardPr
             <Clock className="h-4 w-4" />
             <span>{activity.duration}</span>
           </div>
+          <a
+            href={activity.website}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
+          >
+            Visit website
+            <ExternalLink className="h-4 w-4" aria-hidden="true" />
+          </a>
         </CardContent>
         <CardFooter className="flex gap-2">
           <DialogTrigger asChild>
@@ -92,8 +124,19 @@ export const ActivityCard = ({ activity, onAddToCart, isInCart }: ActivityCardPr
               More Info
             </Button>
           </DialogTrigger>
-          <Button onClick={() => onAddToCart(activity)} disabled={isInCart} className="flex-1">
-            {isInCart ? "Added" : "Add to Plan"}
+          <Button
+            onClick={handleCartClick}
+            variant={isInCart ? "outline" : "default"}
+            className={cn(
+              "flex-1 gap-2",
+              isInCart && "border-destructive text-destructive hover:bg-destructive/10"
+            )}
+          >
+            {isInCart ? (
+              "Remove"
+            ) : (
+              "Add to Plan"
+            )}
           </Button>
         </CardFooter>
       </Card>
@@ -108,11 +151,66 @@ export const ActivityCard = ({ activity, onAddToCart, isInCart }: ActivityCardPr
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
-          <img
-            src={activity.image}
-            alt={activity.title}
-            className="w-full rounded-lg object-cover aspect-video"
-          />
+          <div className="relative">
+            <img
+              src={activeImage}
+              alt={activity.title}
+              className="w-full rounded-lg object-cover aspect-video"
+            />
+            {galleryImages.length > 1 && (
+              <>
+                <Button
+                  type="button"
+                  size="icon"
+                  variant="secondary"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 bg-background/80 backdrop-blur"
+                  onClick={goToPrevImage}
+                  aria-label="Previous image"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+                <Button
+                  type="button"
+                  size="icon"
+                  variant="secondary"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 bg-background/80 backdrop-blur"
+                  onClick={goToNextImage}
+                  aria-label="Next image"
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </>
+            )}
+          </div>
+          {galleryImages.length > 1 && (
+            <div className="flex gap-2 overflow-x-auto pb-2">
+              {galleryImages.map((img, idx) => (
+                <button
+                  key={img + idx}
+                  type="button"
+                  onClick={() => setImage(idx)}
+                  className={cn(
+                    "h-16 w-24 rounded-md overflow-hidden border-2 transition ring-offset-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary",
+                    idx === activeImageIndex ? "border-primary" : "border-transparent"
+                  )}
+                  aria-label={`View image ${idx + 1}`}
+                >
+                  <img src={img} alt="" className="h-full w-full object-cover" />
+                </button>
+              ))}
+            </div>
+          )}
+          <div>
+            <a
+              href={activity.website}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline"
+            >
+              Visit website
+              <ExternalLink className="h-4 w-4" aria-hidden="true" />
+            </a>
+          </div>
           <p className="text-foreground leading-relaxed">{activity.description}</p>
 
           <div className="space-y-3 pt-4 border-t">
@@ -202,11 +300,22 @@ export const ActivityCard = ({ activity, onAddToCart, isInCart }: ActivityCardPr
         <DialogFooter className="gap-2 sm:justify-between">
           <p className="text-sm text-muted-foreground sm:mr-auto">
             {isInCart
-              ? "This activity is already in your plan."
+              ? "Already in your plan - click Remove to take it out."
               : "Add this activity directly to your plan."}
           </p>
-          <Button onClick={() => onAddToCart(activity)} disabled={isInCart}>
-            {isInCart ? "Added" : "Add to Plan"}
+          <Button
+            onClick={handleCartClick}
+            variant={isInCart ? "outline" : "default"}
+            className={cn(
+              "gap-2",
+              isInCart && "border-destructive text-destructive hover:bg-destructive/10"
+            )}
+          >
+            {isInCart ? (
+              "Remove"
+            ) : (
+              "Add to Plan"
+            )}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -97,13 +97,16 @@ const Index = () => {
   };
 
   const addToCart = (activity: Activity) => {
-    if (!cartItems.find(item => item.id === activity.id)) {
-      setCartItems([...cartItems, activity]);
-    }
+    setCartItems(currentItems => {
+      if (currentItems.some(item => item.id === activity.id)) {
+        return currentItems;
+      }
+      return [...currentItems, activity];
+    });
   };
 
   const removeFromCart = (id: string) => {
-    setCartItems(cartItems.filter(item => item.id !== id));
+    setCartItems(currentItems => currentItems.filter(item => item.id !== id));
   };
 
   return (
@@ -209,6 +212,7 @@ const Index = () => {
                     key={activity.id}
                     activity={activity}
                     onAddToCart={addToCart}
+                    onRemoveFromCart={removeFromCart}
                     isInCart={cartItems.some(item => item.id === activity.id)}
                   />
                 ))}
