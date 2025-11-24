@@ -9,6 +9,7 @@ export interface Activity {
   hours: string;
   times: string[];
   duration: string;
+  location: string;
   image: string;
   images: string[];
   availableMonths: string[];

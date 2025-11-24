@@ -14,11 +14,18 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <div className="min-h-screen flex flex-col">
+          <main className="flex-1">
+            <Routes>
+              <Route path="/" element={<Index />} />
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </main>
+          <footer className="bg-muted/40 border-t py-6 px-4 text-sm text-muted-foreground text-center">
+            Plan Your Perfect Dallas Visit is an independent guide. We do not own or operate the attractions listed. All trademarks, names, and images belong to their respective owners. Listings include official links for updated schedules and pricing.
+          </footer>
+        </div>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

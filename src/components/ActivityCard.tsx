@@ -13,7 +13,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
-import { Calendar, CalendarDays, ChevronLeft, ChevronRight, Clock, DollarSign, ExternalLink, MapPin } from "lucide-react";
+import { Calendar, CalendarDays, ChevronLeft, ChevronRight, Clock, DollarSign, ExternalLink, Hourglass, MapPin } from "lucide-react";
 
 const monthDisplay = [
   { label: "Jan", value: "January" },
@@ -53,6 +53,7 @@ export const ActivityCard = ({ activity, onAddToCart, onRemoveFromCart, isInCart
   const activeImage = galleryImages[Math.min(activeImageIndex, galleryImages.length - 1)];
 
   const availableMonthsSet = new Set(activity.availableMonths.map(month => month.toLowerCase()));
+  const isYearRound = availableMonthsSet.size >= monthDisplay.length;
   const openDaysSet = new Set(activity.openDays.map(day => day.toLowerCase()));
   useEffect(() => {
     setActiveImageIndex(0);
@@ -105,7 +106,11 @@ export const ActivityCard = ({ activity, onAddToCart, onRemoveFromCart, isInCart
             <span>{activity.price === 0 ? "Free" : `$${activity.price} per person`}</span>
           </div>
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Clock className="h-4 w-4" />
+            <MapPin className="h-4 w-4" />
+            <span>{activity.location}</span>
+          </div>
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Hourglass className="h-4 w-4" />
             <span>{activity.duration}</span>
           </div>
           <a
@@ -228,21 +233,25 @@ export const ActivityCard = ({ activity, onAddToCart, onRemoveFromCart, isInCart
               <Calendar className="h-5 w-5 text-primary mt-0.5" />
               <div className="w-full">
                 <h4 className="font-semibold">Monthly Availability</h4>
-                <div className="grid grid-cols-6 gap-2 mt-2">
-                  {monthDisplay.map(month => (
-                    <div
-                      key={month.value}
-                      className={cn(
-                        "rounded-full px-2 py-1 text-xs text-center border",
-                        availableMonthsSet.has(month.value.toLowerCase())
-                          ? "bg-primary text-primary-foreground border-primary"
-                          : "text-muted-foreground border-border",
-                      )}
-                    >
-                      {month.label}
-                    </div>
-                  ))}
-                </div>
+                {isYearRound ? (
+                  <p className="text-sm text-muted-foreground mt-2">Available Year-Round</p>
+                ) : (
+                  <div className="grid grid-cols-6 gap-2 mt-2">
+                    {monthDisplay.map(month => (
+                      <div
+                        key={month.value}
+                        className={cn(
+                          "rounded-full px-2 py-1 text-xs text-center border",
+                          availableMonthsSet.has(month.value.toLowerCase())
+                            ? "bg-primary text-primary-foreground border-primary"
+                            : "text-muted-foreground border-border",
+                        )}
+                      >
+                        {month.label}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
 
@@ -290,6 +299,14 @@ export const ActivityCard = ({ activity, onAddToCart, onRemoveFromCart, isInCart
 
             <div className="flex items-start gap-3">
               <MapPin className="h-5 w-5 text-primary mt-0.5" />
+              <div>
+                <h4 className="font-semibold">Location</h4>
+                <p className="text-sm text-muted-foreground">{activity.location}</p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3">
+              <Hourglass className="h-5 w-5 text-primary mt-0.5" />
               <div>
                 <h4 className="font-semibold">Duration</h4>
                 <p className="text-sm text-muted-foreground">{activity.duration}</p>

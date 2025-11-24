@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -27,6 +27,8 @@ const categories = [
   "Nightlife & Arts",
   "Seasonal Events"
 ];
+
+const CART_STORAGE_KEY = "dallas-planner-cart";
 
 const Index = () => {
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
@@ -109,11 +111,37 @@ const Index = () => {
     setCartItems(currentItems => currentItems.filter(item => item.id !== id));
   };
 
+  const clearCart = () => {
+    setCartItems([]);
+  };
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(CART_STORAGE_KEY);
+      if (stored) {
+        const parsed = JSON.parse(stored) as Activity[];
+        if (Array.isArray(parsed)) {
+          setCartItems(parsed.filter(item => item && item.id));
+        }
+      }
+    } catch {
+      // ignore storage errors
+    }
+  }, []);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cartItems));
+    } catch {
+      // ignore storage errors
+    }
+  }, [cartItems]);
+
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
       <div
-        className="relative overflow-hidden py-16 px-4 text-white"
+        className="relative overflow-hidden px-4 py-16 md:py-24 text-white min-h-[40vh] md:min-h-[55vh] flex items-center justify-center"
         style={{
           backgroundImage:
             "linear-gradient(to bottom, rgba(0,0,0,0.65), rgba(0,0,0,0.35), rgba(0,0,0,0.65)), url('/Dallas.jpeg')",
@@ -121,7 +149,7 @@ const Index = () => {
           backgroundPosition: "center",
         }}
       >
-        <div className="relative container mx-auto max-w-4xl text-center">
+        <div className="relative container mx-auto max-w-4xl text-center space-y-4">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
             Plan Your Perfect Dallas Visit
           </h1>
@@ -240,7 +268,7 @@ const Index = () => {
         )}
       </div>
 
-      <CartSidebar items={cartItems} onRemove={removeFromCart} />
+      <CartSidebar items={cartItems} onRemove={removeFromCart} onClear={clearCart} dateRange={dateRange} />
     </div>
   );
 };
