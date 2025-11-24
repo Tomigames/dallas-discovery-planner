@@ -354,7 +354,7 @@ export const CartSidebar = ({ items, onRemove, onClear, dateRange }: CartSidebar
           )}
         </Button>
       </SheetTrigger>
-      <SheetContent className="w-full sm:max-w-lg">
+      <SheetContent className="w-full sm:max-w-lg flex flex-col">
         <SheetHeader>
           <div className="flex items-start justify-between gap-3">
             <div>
@@ -372,7 +372,10 @@ export const CartSidebar = ({ items, onRemove, onClear, dateRange }: CartSidebar
             )}
           </div>
         </SheetHeader>
-        <ScrollArea className="h-[calc(100vh-200px)] mt-6">
+        <ScrollArea
+          className="mt-6"
+          style={{ maxHeight: items.length > 0 ? "calc(100vh - 260px)" : "calc(100vh - 200px)" }}
+        >
           {items.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-center py-12">
               <ShoppingCart className="h-16 w-16 text-muted-foreground mb-4" />
@@ -380,7 +383,7 @@ export const CartSidebar = ({ items, onRemove, onClear, dateRange }: CartSidebar
               <p className="text-sm text-muted-foreground mt-2">Browse activities and add them to your plan</p>
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-4 pb-8">
               {items.map(item => (
                 <div key={item.id} className="border rounded-lg p-4 space-y-2">
                   <div className="flex items-start justify-between gap-2">
@@ -411,7 +414,7 @@ export const CartSidebar = ({ items, onRemove, onClear, dateRange }: CartSidebar
           )}
         </ScrollArea>
         {items.length > 0 && (
-          <div className="absolute bottom-0 left-0 right-0 p-6 bg-background border-t">
+          <div className="sticky bottom-0 left-0 right-0 p-6 bg-background border-t mt-4">
             <div className="flex items-center justify-between mb-4">
               <span className="text-lg font-semibold">Estimated Total (per person)</span>
               <span className="text-2xl font-bold text-primary">

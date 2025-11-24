@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -25,10 +25,48 @@ const categories = [
   "Food & Markets",
   "Parks & Recreation",
   "Nightlife & Arts",
-  "Seasonal Events"
+  "Seasonal Events",
+  "Free"
 ];
 
 const CART_STORAGE_KEY = "dallas-planner-cart";
+const monthNames = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December"
+];
+
+const scheduleIdle = (fn: () => void) => {
+  if (typeof window === "undefined") return;
+  const idle = (window as unknown as { requestIdleCallback?: (cb: () => void) => void }).requestIdleCallback;
+
+  if (typeof idle === "function") {
+    idle(fn);
+    return;
+  }
+
+  window.setTimeout(fn, 50);
+};
+
+const getMonthsInRange = (range?: DateRange) => {
+  if (!range?.from) return [];
+
+  const startMonth = range.from.toLocaleString("en-US", { month: "long" });
+  const endMonth = range.to
+    ? range.to.toLocaleString("en-US", { month: "long" })
+    : startMonth;
+
+  const startIdx = monthNames.indexOf(startMonth);
+  const endIdx = monthNames.indexOf(endMonth);
+
+  if (startIdx === -1 || endIdx === -1) return [];
+
+  return startIdx <= endIdx
+    ? monthNames.slice(startIdx, endIdx + 1)
+    : [...monthNames.slice(startIdx), ...monthNames.slice(0, endIdx + 1)];
+};
+
+const areMonthsEqual = (a: string[], b: string[]) =>
+  a.length === b.length && a.every((month, idx) => month === b[idx]);
 
 const Index = () => {
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
@@ -36,33 +74,27 @@ const Index = () => {
   const [cartItems, setCartItems] = useState<Activity[]>([]);
   const [filteredActivities, setFilteredActivities] = useState<Activity[]>([]);
   const [hasSearched, setHasSearched] = useState(false);
+  const [preloadedActivities, setPreloadedActivities] = useState<Activity[] | null>(null);
+  const [preloadedMonths, setPreloadedMonths] = useState<string[]>([]);
+
+  const getActivitiesForSelection = (months: string[], category: string) => {
+    const baseActivities =
+      preloadedActivities && areMonthsEqual(preloadedMonths, months)
+        ? preloadedActivities
+        : getActivitiesByMonths(months);
+
+    if (category === "All Categories") return baseActivities;
+    if (category === "Free") return baseActivities.filter(a => a.price === 0);
+
+    return baseActivities.filter(a => a.category === category);
+  };
 
   const handleSearch = () => {
-    if (!dateRange?.from) return;
-    
-    const startMonth = dateRange.from.toLocaleString('en-US', { month: 'long' });
-    const endMonth = dateRange.to 
-      ? dateRange.to.toLocaleString('en-US', { month: 'long' })
-      : startMonth;
-    
-    const monthNames = [
-      "January", "February", "March", "April", "May", "June",
-      "July", "August", "September", "October", "November", "December"
-    ];
-    
-    const startIdx = monthNames.indexOf(startMonth);
-    const endIdx = monthNames.indexOf(endMonth);
-    
-    const selectedMonths = startIdx <= endIdx 
-      ? monthNames.slice(startIdx, endIdx + 1)
-      : [...monthNames.slice(startIdx), ...monthNames.slice(0, endIdx + 1)];
-    
-    let activities = getActivitiesByMonths(selectedMonths);
-    
-    if (selectedCategory !== "All Categories") {
-      activities = activities.filter(a => a.category === selectedCategory);
-    }
-    
+    const selectedMonths = getMonthsInRange(dateRange);
+    if (selectedMonths.length === 0) return;
+
+    const activities = getActivitiesForSelection(selectedMonths, selectedCategory);
+
     setFilteredActivities(activities);
     setHasSearched(true);
   };
@@ -71,49 +103,31 @@ const Index = () => {
     setSelectedCategory(category);
     
     if (hasSearched && dateRange?.from) {
-      const startMonth = dateRange.from.toLocaleString('en-US', { month: 'long' });
-      const endMonth = dateRange.to 
-        ? dateRange.to.toLocaleString('en-US', { month: 'long' })
-        : startMonth;
-      
-      const monthNames = [
-        "January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"
-      ];
-      
-      const startIdx = monthNames.indexOf(startMonth);
-      const endIdx = monthNames.indexOf(endMonth);
-      
-      const selectedMonths = startIdx <= endIdx 
-        ? monthNames.slice(startIdx, endIdx + 1)
-        : [...monthNames.slice(startIdx), ...monthNames.slice(0, endIdx + 1)];
-      
-      let activities = getActivitiesByMonths(selectedMonths);
-      
-      if (category !== "All Categories") {
-        activities = activities.filter(a => a.category === category);
+      const selectedMonths = getMonthsInRange(dateRange);
+
+      if (selectedMonths.length > 0) {
+        const activities = getActivitiesForSelection(selectedMonths, category);
+        setFilteredActivities(activities);
       }
-      
-      setFilteredActivities(activities);
     }
   };
 
-  const addToCart = (activity: Activity) => {
+  const addToCart = useCallback((activity: Activity) => {
     setCartItems(currentItems => {
       if (currentItems.some(item => item.id === activity.id)) {
         return currentItems;
       }
       return [...currentItems, activity];
     });
-  };
+  }, []);
 
-  const removeFromCart = (id: string) => {
+  const removeFromCart = useCallback((id: string) => {
     setCartItems(currentItems => currentItems.filter(item => item.id !== id));
-  };
+  }, []);
 
-  const clearCart = () => {
+  const clearCart = useCallback(() => {
     setCartItems([]);
-  };
+  }, []);
 
   useEffect(() => {
     try {
@@ -136,6 +150,53 @@ const Index = () => {
       // ignore storage errors
     }
   }, [cartItems]);
+
+  const preloadedImages = useRef<Set<string>>(new Set());
+  const preloadImages = useCallback((srcs: string[]) => {
+    if (typeof window === "undefined") return;
+
+    const run = () => {
+      srcs.forEach(src => {
+        if (!src || preloadedImages.current.has(src)) return;
+        const img = new Image();
+        img.loading = "lazy";
+        img.decoding = "async";
+        img.src = src;
+        preloadedImages.current.add(src);
+      });
+    };
+
+    scheduleIdle(run);
+  }, []);
+
+  const preloadActivity = useCallback((activity: Activity) => {
+    const hero = activity.images?.[0] ?? activity.image;
+    const secondary = activity.images?.[1];
+    const sources = [hero, secondary].filter(Boolean);
+    preloadImages(sources);
+  }, [preloadImages]);
+
+  useEffect(() => {
+    if (!dateRange?.from) {
+      setPreloadedActivities(null);
+      setPreloadedMonths([]);
+      return;
+    }
+
+    const selectedMonths = getMonthsInRange(dateRange);
+    if (selectedMonths.length === 0) return;
+
+    const activities = getActivitiesByMonths(selectedMonths);
+    setPreloadedActivities(activities);
+    setPreloadedMonths(selectedMonths);
+
+    const heroImages = activities
+      .slice(0, 6)
+      .map(activity => activity.images?.[0] ?? activity.image)
+      .filter(Boolean);
+
+    preloadImages(heroImages);
+  }, [dateRange, preloadImages]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -242,6 +303,7 @@ const Index = () => {
                     onAddToCart={addToCart}
                     onRemoveFromCart={removeFromCart}
                     isInCart={cartItems.some(item => item.id === activity.id)}
+                    onPreload={preloadActivity}
                   />
                 ))}
               </div>
