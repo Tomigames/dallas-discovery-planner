@@ -4,6 +4,8 @@ Dallas Discovery Planner is a **React + TypeScript** single-page application tha
 
 This project focuses on clean UI, fast performance, and a smooth browsing experience even with many images.
 
+Project Demo: https://visitdallas.ariasi.org/
+
 ---
 
 ## 🚀 Features
