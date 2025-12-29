@@ -169,15 +169,20 @@ const ActivityCardComponent = ({ activity, onAddToCart, onRemoveFromCart, isInCa
         </CardFooter>
       </Card>
 
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto overflow-x-hidden">
-        <DialogHeader>
-          <DialogTitle className="text-2xl">{activity.title}</DialogTitle>
-          <DialogDescription>
-            <Badge variant="secondary" className="mt-2">
-              {activity.category}
-            </Badge>
-          </DialogDescription>
-        </DialogHeader>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto overflow-x-hidden">
+          <DialogHeader>
+            <DialogTitle className="text-2xl">{activity.title}</DialogTitle>
+            <DialogDescription>
+              <Badge variant="secondary" className="mt-2">
+                {activity.category}
+              </Badge>
+            </DialogDescription>
+          </DialogHeader>
+          {activity.verifyHours && (
+            <div className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-800">
+              {activity.hoursNote ?? "Operating hours can vary; please check before visiting."}
+            </div>
+          )}
         <div className="space-y-4 min-w-0">
           <div className="relative">
             <img

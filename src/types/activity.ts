@@ -7,6 +7,8 @@ export interface Activity {
   price: number;
   openDays: string[];
   hours: string;
+  verifyHours?: boolean;
+  hoursNote?: string;
   times: string[];
   duration: string;
   location: string;
