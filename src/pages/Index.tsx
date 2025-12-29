@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -35,18 +35,6 @@ const monthNames = [
   "July", "August", "September", "October", "November", "December"
 ];
 
-const scheduleIdle = (fn: () => void) => {
-  if (typeof window === "undefined") return;
-  const idle = (window as unknown as { requestIdleCallback?: (cb: () => void) => void }).requestIdleCallback;
-
-  if (typeof idle === "function") {
-    idle(fn);
-    return;
-  }
-
-  window.setTimeout(fn, 50);
-};
-
 const getMonthsInRange = (range?: DateRange) => {
   if (!range?.from) return [];
 
@@ -65,23 +53,15 @@ const getMonthsInRange = (range?: DateRange) => {
     : [...monthNames.slice(startIdx), ...monthNames.slice(0, endIdx + 1)];
 };
 
-const areMonthsEqual = (a: string[], b: string[]) =>
-  a.length === b.length && a.every((month, idx) => month === b[idx]);
-
 const Index = () => {
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
   const [selectedCategory, setSelectedCategory] = useState<string>("All Categories");
   const [cartItems, setCartItems] = useState<Activity[]>([]);
   const [filteredActivities, setFilteredActivities] = useState<Activity[]>([]);
   const [hasSearched, setHasSearched] = useState(false);
-  const [preloadedActivities, setPreloadedActivities] = useState<Activity[] | null>(null);
-  const [preloadedMonths, setPreloadedMonths] = useState<string[]>([]);
 
   const getActivitiesForSelection = (months: string[], category: string) => {
-    const baseActivities =
-      preloadedActivities && areMonthsEqual(preloadedMonths, months)
-        ? preloadedActivities
-        : getActivitiesByMonths(months);
+    const baseActivities = getActivitiesByMonths(months);
 
     if (category === "All Categories") return baseActivities;
     if (category === "Free") return baseActivities.filter(a => a.price === 0);
@@ -151,58 +131,13 @@ const Index = () => {
     }
   }, [cartItems]);
 
-  const preloadedImages = useRef<Set<string>>(new Set());
-  const preloadImages = useCallback((srcs: string[]) => {
-    if (typeof window === "undefined") return;
-
-    const run = () => {
-      srcs.forEach(src => {
-        if (!src || preloadedImages.current.has(src)) return;
-        const img = new Image();
-        img.loading = "lazy";
-        img.decoding = "async";
-        img.src = src;
-        preloadedImages.current.add(src);
-      });
-    };
-
-    scheduleIdle(run);
-  }, []);
-
-  const preloadActivity = useCallback((activity: Activity) => {
-    const hero = activity.images?.[0] ?? activity.image;
-    const secondary = activity.images?.[1];
-    const sources = [hero, secondary].filter(Boolean);
-    preloadImages(sources);
-  }, [preloadImages]);
-
-  useEffect(() => {
-    if (!dateRange?.from) {
-      setPreloadedActivities(null);
-      setPreloadedMonths([]);
-      return;
-    }
-
-    const selectedMonths = getMonthsInRange(dateRange);
-    if (selectedMonths.length === 0) return;
-
-    const activities = getActivitiesByMonths(selectedMonths);
-    setPreloadedActivities(activities);
-    setPreloadedMonths(selectedMonths);
-
-    const heroImages = activities
-      .slice(0, 6)
-      .map(activity => activity.images?.[0] ?? activity.image)
-      .filter(Boolean);
-
-    preloadImages(heroImages);
-  }, [dateRange, preloadImages]);
-
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
       <div
-        className="relative overflow-hidden px-4 py-16 md:py-24 text-white min-h-[40vh] md:min-h-[55vh] flex items-center justify-center"
+        className={`relative overflow-hidden px-4 text-white flex items-center justify-center ${
+          hasSearched ? "py-8 md:py-12 min-h-[20vh] md:min-h-[28vh]" : "py-16 md:py-24 min-h-[40vh] md:min-h-[55vh]"
+        }`}
         style={{
           backgroundImage:
             "linear-gradient(to bottom, rgba(0,0,0,0.65), rgba(0,0,0,0.35), rgba(0,0,0,0.65)), url('/Dallas.jpeg')",
@@ -303,7 +238,6 @@ const Index = () => {
                     onAddToCart={addToCart}
                     onRemoveFromCart={removeFromCart}
                     isInCart={cartItems.some(item => item.id === activity.id)}
-                    onPreload={preloadActivity}
                   />
                 ))}
               </div>

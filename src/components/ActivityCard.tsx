@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
 import { Activity } from "@/types/activity";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -45,12 +45,9 @@ interface ActivityCardProps {
   onAddToCart: (activity: Activity) => void;
   onRemoveFromCart: (id: string) => void;
   isInCart: boolean;
-  onPreload?: (activity: Activity) => void;
 }
 
-const ActivityCardComponent = ({ activity, onAddToCart, onRemoveFromCart, isInCart, onPreload }: ActivityCardProps) => {
-  const [hasAutoPreloaded, setHasAutoPreloaded] = useState(false);
-  const intersectionRef = useRef<IntersectionObserver | null>(null);
+const ActivityCardComponent = ({ activity, onAddToCart, onRemoveFromCart, isInCart }: ActivityCardProps) => {
   const galleryImages = activity.images && activity.images.length > 0 ? activity.images : [activity.image];
   const heroImage = galleryImages[0] ?? activity.image;
   const [activeImageIndex, setActiveImageIndex] = useState(0);
@@ -63,12 +60,6 @@ const ActivityCardComponent = ({ activity, onAddToCart, onRemoveFromCart, isInCa
   useEffect(() => {
     setActiveImageIndex(0);
     setIsGalleryOpen(false);
-    setHasAutoPreloaded(false);
-    intersectionRef.current?.disconnect();
-
-    return () => {
-      intersectionRef.current?.disconnect();
-    };
   }, [activity.id]);
   const handleCartClick = () => {
     if (isInCart) {
@@ -105,37 +96,12 @@ const ActivityCardComponent = ({ activity, onAddToCart, onRemoveFromCart, isInCa
     <Dialog>
       <Card
         className="overflow-hidden hover:shadow-lg transition-shadow"
-        onMouseEnter={() => onPreload?.(activity)}
-        ref={node => {
-          if (!node || hasAutoPreloaded || typeof window === "undefined") return;
-
-          intersectionRef.current?.disconnect();
-
-          if ("IntersectionObserver" in window) {
-            const observer = new IntersectionObserver(entries => {
-              entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                  onPreload?.(activity);
-                  setHasAutoPreloaded(true);
-                  observer.disconnect();
-                }
-              });
-            }, { rootMargin: "200px 0px" });
-
-            intersectionRef.current = observer;
-            observer.observe(node);
-          } else {
-            onPreload?.(activity);
-            setHasAutoPreloaded(true);
-          }
-        }}
       >
         <DialogTrigger asChild>
           <button
             type="button"
             aria-label={`View details for ${activity.title}`}
             className="group block w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary"
-            onFocus={() => onPreload?.(activity)}
           >
             <div className="aspect-video overflow-hidden">
               <img
