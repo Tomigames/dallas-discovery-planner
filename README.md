@@ -2,7 +2,7 @@
 
 Dallas Discovery Planner is a **React + TypeScript** single-page application that helps users explore the best activities, attractions, and neighborhoods in Dallas. Users can select a date range, browse curated experiences, and build the perfect trip based on their preferences.
 
-This project focuses on clean UI, fast performance, and a smooth browsing experience—even with many images.
+This project focuses on clean UI, fast performance, and a smooth browsing experience even with many images.
 
 ---
 
