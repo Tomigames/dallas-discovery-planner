@@ -14,20 +14,22 @@ import { cn } from "@/lib/utils";
 
 const categories = [
   "All Categories",
-  "Nature & Gardens",
-  "Museums & History",
-  "Museums & Science",
+  "Nature & Outdoors",
+  "Museums",
   "Landmarks & Views",
-  "Family & Entertainment",
+  "Entertainment",
   "Shopping & Dining",
-  "Sports & Entertainment",
-  "Nature & Recreation",
-  "Food & Markets",
-  "Parks & Recreation",
   "Nightlife & Arts",
   "Seasonal Events",
   "Free"
 ];
+
+const categoryMap: Record<string, string[]> = {
+  "Nature & Outdoors": ["Nature & Gardens", "Nature & Recreation", "Parks & Recreation"],
+  "Museums": ["Museums & History", "Museums & Science"],
+  "Entertainment": ["Family & Entertainment", "Sports & Entertainment"],
+  "Shopping & Dining": ["Shopping & Dining", "Food & Markets"],
+};
 
 const CART_STORAGE_KEY = "dallas-planner-cart";
 const monthNames = [
@@ -65,6 +67,9 @@ const Index = () => {
 
     if (category === "All Categories") return baseActivities;
     if (category === "Free") return baseActivities.filter(a => a.price === 0);
+
+    const mapped = categoryMap[category];
+    if (mapped) return baseActivities.filter(a => mapped.includes(a.category));
 
     return baseActivities.filter(a => a.category === category);
   };
@@ -234,14 +239,13 @@ const Index = () => {
             {filteredActivities.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredActivities.map(activity => (
-                  <div key={activity.id} style={{ contentVisibility: "auto", containIntrinsicSize: "0 420px" }}>
-                    <ActivityCard
-                      activity={activity}
-                      onAddToCart={addToCart}
-                      onRemoveFromCart={removeFromCart}
-                      isInCart={cartItemIds.has(activity.id)}
-                    />
-                  </div>
+                  <ActivityCard
+                    key={activity.id}
+                    activity={activity}
+                    onAddToCart={addToCart}
+                    onRemoveFromCart={removeFromCart}
+                    isInCart={cartItemIds.has(activity.id)}
+                  />
                 ))}
               </div>
             ) : (

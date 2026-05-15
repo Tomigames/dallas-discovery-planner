@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mv \"Arbor Hills Nature Preserve.png\" \"arbor-hills-1.png\")",
+      "Bash(mv \"legacy shop.png\" \"shops-at-legacy-3.png\")",
+      "Bash(mv \"oak point park and nature preserve.png\" \"oak-point-park-1.png\")"
+    ]
+  }
+}
