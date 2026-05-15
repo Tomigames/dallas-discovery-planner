@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { Activity } from "@/types/activity";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -48,15 +48,24 @@ interface ActivityCardProps {
 }
 
 const ActivityCardComponent = ({ activity, onAddToCart, onRemoveFromCart, isInCart }: ActivityCardProps) => {
-  const galleryImages = activity.images && activity.images.length > 0 ? activity.images : [activity.image];
+  const galleryImages = useMemo(
+    () => activity.images && activity.images.length > 0 ? activity.images : [activity.image],
+    [activity.images, activity.image]
+  );
   const heroImage = galleryImages[0] ?? activity.image;
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
   const activeImage = galleryImages[Math.min(activeImageIndex, galleryImages.length - 1)];
 
-  const availableMonthsSet = new Set(activity.availableMonths.map(month => month.toLowerCase()));
+  const availableMonthsSet = useMemo(
+    () => new Set(activity.availableMonths.map(month => month.toLowerCase())),
+    [activity.availableMonths]
+  );
   const isYearRound = availableMonthsSet.size >= monthDisplay.length;
-  const openDaysSet = new Set(activity.openDays.map(day => day.toLowerCase()));
+  const openDaysSet = useMemo(
+    () => new Set(activity.openDays.map(day => day.toLowerCase())),
+    [activity.openDays]
+  );
   useEffect(() => {
     setActiveImageIndex(0);
     setIsGalleryOpen(false);
@@ -109,7 +118,7 @@ const ActivityCardComponent = ({ activity, onAddToCart, onRemoveFromCart, isInCa
                 alt={activity.title}
                 loading="lazy"
                 decoding="async"
-                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 will-change-transform"
               />
             </div>
           </button>

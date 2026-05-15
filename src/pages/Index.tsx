@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -109,6 +109,8 @@ const Index = () => {
     setCartItems([]);
   }, []);
 
+  const cartItemIds = useMemo(() => new Set(cartItems.map(item => item.id)), [cartItems]);
+
   useEffect(() => {
     try {
       const stored = localStorage.getItem(CART_STORAGE_KEY);
@@ -135,8 +137,8 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
       <div
-        className={`relative overflow-hidden px-4 text-white flex items-center justify-center ${
-          hasSearched ? "py-8 md:py-12 min-h-[20vh] md:min-h-[28vh]" : "py-16 md:py-24 min-h-[40vh] md:min-h-[55vh]"
+        className={`relative overflow-hidden px-4 text-white flex items-center justify-center transition-all duration-300 ${
+          hasSearched ? "py-4 md:py-12 min-h-[10vh] md:min-h-[28vh]" : "py-16 md:py-24 min-h-[40vh] md:min-h-[55vh]"
         }`}
         style={{
           backgroundImage:
@@ -145,29 +147,29 @@ const Index = () => {
           backgroundPosition: "center",
         }}
       >
-        <div className="relative container mx-auto max-w-4xl text-center space-y-4">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">
+        <div className="relative container mx-auto max-w-4xl text-center space-y-2">
+          <h1 className={`font-bold mb-1 transition-all duration-300 ${hasSearched ? "text-2xl md:text-5xl" : "text-4xl md:text-5xl"}`}>
             Plan Your Perfect Dallas Visit
           </h1>
-          <p className="text-lg md:text-xl opacity-90">
+          <p className={`opacity-90 transition-all duration-300 ${hasSearched ? "hidden md:block text-lg md:text-xl" : "text-lg md:text-xl"}`}>
             Discover amazing activities tailored to your travel dates
           </p>
         </div>
       </div>
 
       {/* Search Form */}
-      <div className="container mx-auto max-w-4xl px-4 mt-8 mb-12">
+      <div className="container mx-auto max-w-4xl px-4 mt-4 md:mt-8 mb-6 md:mb-12">
         <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Calendar className="h-5 w-5" />
+          <CardHeader className="p-4 md:p-6">
+            <CardTitle className="flex items-center gap-2 text-base md:text-xl">
+              <Calendar className="h-4 w-4 md:h-5 md:w-5 shrink-0" />
               When are you visiting Dallas?
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="text-xs md:text-sm">
               Select your travel dates to get personalized activity recommendations
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-3 md:space-y-4 p-4 md:p-6 pt-0 md:pt-0">
             <div className="space-y-2">
               <Label>Travel Dates</Label>
               <DateRangePicker
@@ -180,7 +182,7 @@ const Index = () => {
             <Button
               onClick={handleSearch}
               className="w-full"
-              size="lg"
+              size="default"
               disabled={!(dateRange?.from && dateRange?.to)}
             >
               Find Activities
@@ -232,13 +234,14 @@ const Index = () => {
             {filteredActivities.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredActivities.map(activity => (
-                  <ActivityCard
-                    key={activity.id}
-                    activity={activity}
-                    onAddToCart={addToCart}
-                    onRemoveFromCart={removeFromCart}
-                    isInCart={cartItems.some(item => item.id === activity.id)}
-                  />
+                  <div key={activity.id} style={{ contentVisibility: "auto", containIntrinsicSize: "0 420px" }}>
+                    <ActivityCard
+                      activity={activity}
+                      onAddToCart={addToCart}
+                      onRemoveFromCart={removeFromCart}
+                      isInCart={cartItemIds.has(activity.id)}
+                    />
+                  </div>
                 ))}
               </div>
             ) : (

@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { addDays, format, isAfter, isSameDay } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { DateRange, SelectRangeEventHandler } from "react-day-picker";
@@ -21,7 +21,16 @@ export const DateRangePicker = ({
 }: DateRangePickerProps) => {
   const [open, setOpen] = useState(false);
   const [hoveredDay, setHoveredDay] = useState<Date | undefined>();
+  const [isMobile, setIsMobile] = useState(false);
   const today = new Date();
+
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 639px)");
+    setIsMobile(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
   today.setHours(0, 0, 0, 0);
 
   const handleSelect: SelectRangeEventHandler = (range, selectedDay) => {
@@ -151,14 +160,14 @@ export const DateRangePicker = ({
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-auto p-0 bg-popover z-50" align="start">
+      <PopoverContent className="w-auto max-w-[calc(100vw-1rem)] p-0 bg-popover z-50" align="start">
         <Calendar
           initialFocus
           mode="range"
           defaultMonth={dateRange?.from}
           selected={dateRange}
           onSelect={handleSelect}
-          numberOfMonths={2}
+          numberOfMonths={isMobile ? 1 : 2}
           disabled={date => date < today}
           modifiers={modifiers}
           modifiersClassNames={modifiersClassNames}
