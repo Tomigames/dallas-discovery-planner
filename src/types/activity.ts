@@ -12,6 +12,8 @@ export interface Activity {
   times: string[];
   duration: string;
   location: string;
+  lat?: number;
+  lng?: number;
   image: string;
   images: string[];
   availableMonths: string[];

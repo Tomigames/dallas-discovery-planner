@@ -88,3 +88,27 @@ Dallas Discovery Planner is structured as a **client-side React SPA**, designed 
 ```bash
 git clone https://github.com/Tomigames/dallas-discovery-planner.git
 cd dallas-discovery-planner
+```
+
+### 2. Install dependencies
+```bash
+npm install
+```
+
+> If you prefer Bun:
+```bash
+bun install
+```
+
+### 3. Start the dev server
+```bash
+npm run dev
+```
+
+> Or with Bun:
+```bash
+bun run dev
+```
+
+### 4. Open in browser
+Open `http://localhost:5173` after the dev server starts.

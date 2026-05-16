@@ -5,28 +5,31 @@ import { Button } from "@/components/ui/button";
 import { ActivityCard } from "@/components/ActivityCard";
 import { CartSidebar } from "@/components/CartSidebar";
 import { DateRangePicker } from "@/components/DateRangePicker";
+import { MapView } from "@/components/MapView";
 import { getActivitiesByMonths } from "@/data/activities";
 import { Activity } from "@/types/activity";
-import { Calendar, Filter } from "lucide-react";
+import { Calendar, Filter, Map } from "lucide-react";
 import { DateRange } from "react-day-picker";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { categoryColors } from "@/lib/categoryColors";
 
 const categories = [
   "All Categories",
-  "Nature & Outdoors",
-  "Museums",
+  "Gardens",
+  "Nature & Wildlife",
+  "Parks & Trails",
+  "Museums & Arts",
   "Landmarks & Views",
   "Entertainment",
   "Shopping & Dining",
-  "Nightlife & Arts",
+  "Nightlife",
   "Seasonal Events",
   "Free"
 ];
 
 const categoryMap: Record<string, string[]> = {
-  "Nature & Outdoors": ["Nature & Gardens", "Nature & Recreation", "Parks & Recreation"],
-  "Museums": ["Museums & History", "Museums & Science"],
+  "Museums & Arts": ["History Museum", "Art Museum", "Science Museum", "Arts & Culture", "Performing Arts"],
   "Entertainment": ["Family & Entertainment", "Sports & Entertainment"],
   "Shopping & Dining": ["Shopping & Dining", "Food & Markets"],
 };
@@ -61,6 +64,17 @@ const Index = () => {
   const [cartItems, setCartItems] = useState<Activity[]>([]);
   const [filteredActivities, setFilteredActivities] = useState<Activity[]>([]);
   const [hasSearched, setHasSearched] = useState(false);
+  const [showMap, setShowMap] = useState(false);
+
+  const hasSeasonalEvents = useMemo(
+    () => filteredActivities.some(a => a.category === "Seasonal Events"),
+    [filteredActivities]
+  );
+
+  const visibleCategories = useMemo(
+    () => categories.filter(c => c !== "Seasonal Events" || hasSeasonalEvents),
+    [hasSeasonalEvents]
+  );
 
   const getActivitiesForSelection = (months: string[], category: string) => {
     const baseActivities = getActivitiesByMonths(months);
@@ -196,27 +210,60 @@ const Index = () => {
         </Card>
       </div>
 
-      {/* Category Filter */}
+      {/* Category Filter + Map */}
       {hasSearched && (
         <div className="container mx-auto px-4 mb-8">
-          <div className="flex items-center gap-2 mb-4">
-            <Filter className="h-5 w-5" />
-            <h3 className="font-semibold">Filter by Category</h3>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {categories.map(category => (
-              <Badge
-                key={category}
-                variant={selectedCategory === category ? "default" : "outline"}
-                className={cn(
-                  "cursor-pointer transition-colors",
-                  selectedCategory === category && "shadow-md"
-                )}
-                onClick={() => handleCategoryChange(category)}
-              >
-                {category}
-              </Badge>
-            ))}
+          <div className="flex flex-col gap-4">
+            {/* Filter */}
+            <div>
+              <div className="flex items-center justify-between gap-2 mb-4">
+                <div className="flex items-center gap-2">
+                  <Filter className="h-5 w-5" />
+                  <h3 className="font-semibold">Filter by Category</h3>
+                </div>
+                <Button
+                  variant={showMap ? "default" : "outline"}
+                  size="sm"
+                  className="gap-1.5"
+                  onClick={() => setShowMap(v => !v)}
+                >
+                  <Map className="h-4 w-4" />
+                  {showMap ? "Hide Map" : "Show Map"}
+                </Button>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {visibleCategories.map(category => {
+                  const color = categoryColors[category];
+                  const isSelected = selectedCategory === category;
+                  return (
+                    <Badge
+                      key={category}
+                      variant="outline"
+                      className={cn("cursor-pointer transition-all", isSelected && color && "shadow-md text-white border-transparent", isSelected && !color && "shadow-md")}
+                      style={isSelected && color ? {
+                        borderColor: color,
+                        backgroundColor: color,
+                      } : undefined}
+                      onClick={() => handleCategoryChange(category)}
+                    >
+                      {category}
+                    </Badge>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Map */}
+            {showMap && (
+              <div className="flex-1 min-w-0">
+                <MapView
+                  activities={filteredActivities}
+                  cartItemIds={cartItemIds}
+                  onAddToCart={addToCart}
+                  onRemoveFromCart={removeFromCart}
+                />
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -272,6 +319,11 @@ const Index = () => {
       </div>
 
       <CartSidebar items={cartItems} onRemove={removeFromCart} onClear={clearCart} dateRange={dateRange} />
+
+      <footer className="text-center py-4 text-xs text-muted-foreground">
+        v2.0
+      </footer>
+
     </div>
   );
 };
